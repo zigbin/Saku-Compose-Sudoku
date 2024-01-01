@@ -147,7 +147,7 @@ fun DashboardScreen(
 				)
 			}
 		) {
-			Text("Play")
+			Text(stringResource(id = R.string.play))
 		}
 		
 		AnimatedVisibility(visible = viewModel.canResume) {
@@ -165,7 +165,7 @@ fun DashboardScreen(
 					)
 				}
 			) {
-				Text("Resume")
+				Text(stringResource(id = R.string.resume_game))
 			}
 		}
 		

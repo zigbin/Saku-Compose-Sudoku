@@ -20,3 +20,13 @@ val Difficulty.icon: Int
 		Difficulty.Hard -> R.drawable.ic_difficulty_hard
 		Difficulty.Evil -> R.drawable.ic_difficulty_evil
 	}
+
+
+val Difficulty.label:Int
+	get() = when (this) {
+		Difficulty.Fast -> R.string.fast
+		Difficulty.Easy -> R.string.easy
+		Difficulty.Normal -> R.string.normal
+		Difficulty.Hard -> R.string.hard
+		Difficulty.Evil -> R.string.evil
+	}

@@ -15,8 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.anafthdev.saku.data.Difficulty
+import com.anafthdev.saku.extension.label
 import timber.log.Timber
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -94,7 +96,7 @@ fun DifficultySelector(
 			}
 		) { mode ->
 			Text(
-				text = mode.name,
+				stringResource(id = mode.label),
 				style = MaterialTheme.typography.titleLarge
 			)
 		}

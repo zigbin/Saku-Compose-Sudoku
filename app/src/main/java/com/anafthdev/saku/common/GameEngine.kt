@@ -192,13 +192,13 @@ class GameEngine @Inject constructor(
 					updatedCell = updatedCell.copy(
 						subCells = updatedCell.subCells.toMutableList().apply {
 							val subCell = find { it.n == num }
-							
-							if (subCell != null) {
-								removeIf { it.n == num }
-							} else {
-								add(
-									Cell(n = num)
-								)
+
+							if (num != -1) {
+								if (subCell != null) {
+									removeIf { it.n == num }
+								} else {
+									add(Cell(n = num))
+								}
 							}
 						}
 					)

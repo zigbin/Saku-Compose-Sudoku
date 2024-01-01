@@ -75,7 +75,12 @@ fun NumberPad(
 					.clickable(
 						enabled = enabled,
 						onClick = {
-							onNumberSelected(i)
+							// 点击时判断是否已经选中，如果已选中，则取消选择，否则选择
+							if (selected) {
+								onNumberSelected(-1) // -1 表示取消选择
+							} else {
+								onNumberSelected(i)
+							}
 						}
 					)
 			) {
@@ -84,7 +89,7 @@ fun NumberPad(
 				) {
 					AutoResizeText(
 						text = i.toString(),
-						style = MaterialTheme.typography.bodyMedium.copy(
+						style = MaterialTheme.typography.titleLarge.copy(
 							color = if (selected && enabled) MaterialTheme.colorScheme.background
 							else MaterialTheme.colorScheme.onBackground.copy(alpha = alpha)
 						)
@@ -99,7 +104,7 @@ fun NumberPad(
 						
 						Text(
 							text = remainingNumber,
-							style = MaterialTheme.typography.labelSmall.copy(
+							style = MaterialTheme.typography.labelMedium.copy(
 								color = if (selected) Color.LightGray
 								else Color.Gray.copy(alpha = alpha)
 							)

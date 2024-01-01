@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +45,7 @@ import com.anafthdev.saku.component.ObserveLifecycle
 import com.anafthdev.saku.data.Difficulty
 import com.anafthdev.saku.data.SakuDestination
 import com.anafthdev.saku.extension.hourMinuteFormat
+import com.anafthdev.saku.extension.label
 import com.anafthdev.saku.extension.toast
 import com.anafthdev.saku.uicomponent.AnimatedTextByChar
 import com.anafthdev.saku.uicomponent.NumberPad
@@ -213,6 +215,14 @@ fun GameScreen(
 			navController.navigate(
 				SakuDestination.Sheet.Print.Home.createRoute(boardJson, solvedBoardJson)
 			)
+		},
+
+		onBack = {
+			viewModel.saveState()
+
+			viewModel.updateIsPaused(false)
+
+			navController.popBackStack()
 		}
 	)
 }
@@ -222,7 +232,8 @@ fun GameContent(
 	viewModel: GameViewModel,
 	onActionClicked: (SudokuGameAction) -> Unit,
 	onPause: () -> Unit,
-	onPrint: () -> Unit
+	onPrint: () -> Unit,
+	onBack: () -> Unit
 ) {
 	LazyColumn(
 		verticalArrangement = Arrangement.SpaceBetween,
@@ -239,7 +250,8 @@ fun GameContent(
 				win = viewModel.win,
 				difficulty = viewModel.difficulty,
 				onPause = onPause,
-				onPrint = onPrint
+				onPrint = onPrint,
+				onBack = onBack
 			)
 		}
 		
@@ -298,10 +310,20 @@ private fun GameScreenHeader(
 	difficulty: Difficulty,
 	modifier: Modifier = Modifier,
 	onPause: () -> Unit,
-	onPrint: () -> Unit
+	onPrint: () -> Unit,
+	onBack: () -> Unit
 ) {
 	
 	Row(modifier = modifier) {
+		IconButton(onClick = onBack) {
+			Icon(
+				painter = painterResource(id = R.drawable.ic_back),
+				contentDescription = null
+			)
+		}
+
+		Spacer(modifier = Modifier.width(10.dp))
+
 		Column {
 			AnimatedTextByChar(
 				text = "${hourMinuteFormat(hours)}:${hourMinuteFormat(minute)}:${hourMinuteFormat(second)}",
@@ -311,16 +333,16 @@ private fun GameScreenHeader(
 			)
 			
 			Text(
-				text = difficulty.name,
+				text = stringResource(id = difficulty.label),
 				style = MaterialTheme.typography.titleLarge.copy(
 					fontWeight = FontWeight.Light,
 					color = Color.Gray
 				)
 			)
 		}
-		
+
 		Spacer(modifier = Modifier.weight(1f))
-		
+
 		IconButton(onClick = onPrint) {
 			Icon(
 				painter = painterResource(id = R.drawable.ic_printer),
