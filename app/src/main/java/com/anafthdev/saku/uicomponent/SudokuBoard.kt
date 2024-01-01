@@ -83,7 +83,7 @@ fun SudokuBoard(
 		}
 		
 		val cellSize = remember(gridCellSize) {
-			gridCellSize / 3.2f
+			gridCellSize / 3f
 		}
 		
 		Row {
@@ -293,9 +293,8 @@ private fun CellBox(
 						sortedSubCells.forEach { cell ->
 							Text(
 								text = cell.n.toString(),
-								style = MaterialTheme.typography.labelSmall.copy(
+								style = MaterialTheme.typography.labelMedium.copy(
 									fontWeight = FontWeight.Light,
-									fontSize = 8.sp
 								)
 							)
 						}

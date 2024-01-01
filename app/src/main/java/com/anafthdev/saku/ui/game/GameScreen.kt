@@ -1,5 +1,6 @@
 package com.anafthdev.saku.ui.game
 
+import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -16,9 +17,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemGesturesPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -33,6 +38,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -235,6 +241,39 @@ fun GameContent(
 	onPrint: () -> Unit,
 	onBack: () -> Unit
 ) {
+	when(LocalConfiguration.current.orientation){
+		Configuration.ORIENTATION_LANDSCAPE -> {
+			//横屏布局
+			LandscapeLayout(
+				viewModel = viewModel,
+				onActionClicked = onActionClicked,
+				onPause = onPause,
+				onPrint = onPrint,
+				onBack = onBack
+			)
+		}
+		//竖屏布局
+		Configuration.ORIENTATION_PORTRAIT -> {
+			PortraitLayout(
+				viewModel = viewModel,
+				onActionClicked = onActionClicked,
+				onPause = onPause,
+				onPrint = onPrint,
+				onBack = onBack
+			)
+		}
+	}
+
+}
+
+@Composable
+fun PortraitLayout(
+	viewModel: GameViewModel,
+	onActionClicked: (SudokuGameAction) -> Unit,
+	onPause: () -> Unit,
+	onPrint: () -> Unit,
+	onBack: () -> Unit,
+){
 	LazyColumn(
 		verticalArrangement = Arrangement.SpaceBetween,
 		contentPadding = PaddingValues(16.dp),
@@ -300,6 +339,98 @@ fun GameContent(
 	}
 }
 
+
+@Composable
+fun LandscapeLayout(
+	viewModel: GameViewModel,
+	onActionClicked: (SudokuGameAction) -> Unit,
+	onPause: () -> Unit,
+	onPrint: () -> Unit,
+	onBack: () -> Unit,
+) {
+	Row(
+		modifier = Modifier
+			.systemBarsPadding()
+			.systemGesturesPadding()
+			.navigationBarsPadding()
+			.fillMaxHeight()
+	) {
+
+		// Left Column for SudokuBoard
+		Box(
+			modifier = Modifier
+				.fillMaxHeight()
+				.padding(start = 16.dp)
+		) {
+			SudokuBoard(
+				cells = viewModel.board,
+				win = viewModel.win,
+				selectedCell = viewModel.selectedCell,
+				onCellClicked = viewModel::updateBoard,
+				highlightNumberEnabled = viewModel.highlightNumberEnabled,
+				modifier = Modifier
+					.aspectRatio(1f / 1f)
+			)
+		}
+
+
+		// Right Column for NumberPad and SudokuGameAction
+		Column(
+			modifier = Modifier
+				.weight(1f)
+		) {
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+			) {
+				GameScreenHeader(
+					minute = viewModel.minute,
+					second = viewModel.second,
+					hours = viewModel.hours,
+					win = viewModel.win,
+					difficulty = viewModel.difficulty,
+					onPause = onPause,
+					onPrint = onPrint,
+					onBack = onBack,
+					modifier = Modifier
+						.fillMaxWidth()
+
+				)
+			}
+
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+					.weight(1f)
+			) {
+				NumberPad(
+					enabled = !viewModel.win,
+					selectedNumber = viewModel.selectedNumber,
+					remainingNumbers = viewModel.remainingNumbers,
+					showRemainingNumber = viewModel.remainingNumberEnabled,
+					onNumberSelected = viewModel::updateSelectedNumber,
+					modifier = Modifier
+						.fillMaxWidth()
+				)
+			}
+
+			Box(
+				contentAlignment = Alignment.Center,
+				modifier = Modifier
+					.weight(1f)
+			) {
+				SudokuGameAction(
+					enabled = !viewModel.win,
+					selected = viewModel.selectedGameAction,
+					onClick = onActionClicked,
+					modifier = Modifier
+						.fillMaxWidth()
+				)
+			}
+		}
+	}
+}
+
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun GameScreenHeader(
@@ -314,12 +445,23 @@ private fun GameScreenHeader(
 	onBack: () -> Unit
 ) {
 	
-	Row(modifier = modifier) {
-		IconButton(onClick = onBack) {
-			Icon(
-				painter = painterResource(id = R.drawable.ic_back),
-				contentDescription = null
-			)
+	Row(modifier = modifier
+	) {
+		AnimatedVisibility(
+			visible = (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT),
+			enter = expandHorizontally(
+				animationSpec = tween(800)
+			),
+			exit = shrinkHorizontally(
+				animationSpec = tween(800)
+			) + scaleOut()
+		) {
+			IconButton(onClick = onBack) {
+				Icon(
+					painter = painterResource(id = R.drawable.ic_back),
+					contentDescription = null
+				)
+			}
 		}
 
 		Spacer(modifier = Modifier.width(10.dp))

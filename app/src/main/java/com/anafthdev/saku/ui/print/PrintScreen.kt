@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemGesturesPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -67,6 +69,8 @@ fun PrintScreen(
 		modifier = Modifier
 			.padding(8.dp)
 			.navigationBarsPadding()
+			.systemGesturesPadding()
+			.systemBarsPadding(),
 	) {
 		Row(
 			verticalAlignment = Alignment.CenterVertically,

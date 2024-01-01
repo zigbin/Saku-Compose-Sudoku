@@ -2,6 +2,7 @@ package com.anafthdev.saku.common
 
 import kotlin.math.floor
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 class Sudoku {
 	
@@ -9,6 +10,7 @@ class Sudoku {
 	
 	var board: Array<IntArray> = arrayOf()
 	var solvedBoard: Array<IntArray> = arrayOf()
+	var solution = 0
 	
 	/**
 	 * number of columns/rows.
@@ -180,24 +182,15 @@ class Sudoku {
 	// Remove the K no. of digits to
 	// complete game
 	fun removeKDigits() {
-		var count: Int = numMissingDigits
-		
-		while (count != 0) {
-			val cellId: Int = floor(Math.random() * (numRowOrColumn * numRowOrColumn) + 1).toInt() - 1
-			
-			// extract coordinates i and j
-			val i: Int = cellId / numRowOrColumn
-			var j: Int = cellId % 9
-			
-			if (j != 0) {
-				j -= 1
-			}
-			
-			if (board[i][j] != 0) {
-				count--
-				
-				board[i][j] = 0
-			}
+		repeat(numMissingDigits) {
+			var i: Int
+			var j: Int
+			do {
+				i = Random.nextInt(numRowOrColumn)
+				j = Random.nextInt(numRowOrColumn)
+			} while (board[i][j] == 0)
+
+			board[i][j] = 0
 		}
 	}
 	

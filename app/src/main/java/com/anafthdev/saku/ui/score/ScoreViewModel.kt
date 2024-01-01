@@ -1,6 +1,7 @@
 package com.anafthdev.saku.ui.score
 
 import android.icu.text.DateFormat
+import android.icu.text.SimpleDateFormat
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +22,7 @@ class ScoreViewModel @Inject constructor(
 	private val scoreRepository: ScoreRepository
 ): ViewModel() {
 	
-	private val dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT)
+	private val dateFormatter = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
 	
 	var scoreToDelete by mutableStateOf<Score?>(null)
 		private set

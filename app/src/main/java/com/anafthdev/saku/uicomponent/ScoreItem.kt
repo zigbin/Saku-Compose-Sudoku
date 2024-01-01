@@ -29,6 +29,7 @@ import com.anafthdev.saku.data.local.database.ScoreDataProvider
 import com.anafthdev.saku.data.model.Score
 import com.anafthdev.saku.extension.hourMinuteFormat
 import com.anafthdev.saku.extension.icon
+import com.anafthdev.saku.extension.label
 import com.anafthdev.saku.theme.SakuTheme
 
 @Preview
@@ -123,7 +124,7 @@ fun ScoreItem(
 					Spacer(modifier = Modifier.height(4.dp))
 					
 					Text(
-						text = score.difficulty.name,
+						text = stringResource(id = score.difficulty.label),
 						style = MaterialTheme.typography.bodyMedium
 					)
 				}
