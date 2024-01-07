@@ -1,8 +1,12 @@
 package com.anafthdev.saku.common
 
+import android.util.Log
+import com.anafthdev.saku.dlx.DancingLinksAlgorithm
 import kotlin.math.floor
 import kotlin.math.sqrt
 import kotlin.random.Random
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 class Sudoku {
 	
@@ -10,8 +14,7 @@ class Sudoku {
 	
 	var board: Array<IntArray> = arrayOf()
 	var solvedBoard: Array<IntArray> = arrayOf()
-	var solution = 0
-	
+
 	/**
 	 * number of columns/rows.
 	 */
@@ -88,8 +91,9 @@ class Sudoku {
 		
 		// Fill remaining blocks
 		fillRemaining(0, srNumRowOrColumn)
+		solvedBoard = board.copy()
 		
-		solvedBoard = board.clone().also {
+		board.clone().also {
 			listener?.onSolvedBoardCreated(it)
 			println(it.map { it.contentToString() })
 		}
@@ -182,18 +186,28 @@ class Sudoku {
 	// Remove the K no. of digits to
 	// complete game
 	fun removeKDigits() {
-		repeat(numMissingDigits) {
-			var i: Int
-			var j: Int
-			do {
-				i = Random.nextInt(numRowOrColumn)
-				j = Random.nextInt(numRowOrColumn)
-			} while (board[i][j] == 0)
+		val dancingLinksAlgorithm = DancingLinksAlgorithm()
+		var remainingDigits = numMissingDigits
 
-			board[i][j] = 0
+		while (remainingDigits > 0) {
+			val i = Random.nextInt(numRowOrColumn)
+			val j = Random.nextInt(numRowOrColumn)
+
+			if (board[i][j] != 0) {
+				val testBoard = board.copy()
+				testBoard[i][j] = 0
+
+				if (dancingLinksAlgorithm.solve(testBoard) == 1) {
+					board[i][j] = 0
+					remainingDigits--
+				}
+			}
 		}
 	}
-	
+
+	//copy Array value
+	private fun Array<IntArray>.copy() = Array(size) { get(it).clone() }
+
 	fun printBoard(): Array<IntArray> {
 		fillValues()
 		
@@ -209,6 +223,18 @@ class Sudoku {
 //
 //		return arrayOf()
 		return board
+	}
+
+
+	fun boardLogcat(name:String, puzzle:Array<IntArray>){
+		var prin = "$name:\n"
+		for (i in 0 until 9) {
+			for (j in 0 until 9) {
+				prin = prin + puzzle[i][j] + ","
+			}
+			prin = prin + "\n"
+		}
+		Log.i("Sudoku", prin)
 	}
 	
 	fun setListener(l: SudokuListener) {
